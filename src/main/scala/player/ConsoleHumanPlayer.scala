@@ -8,7 +8,10 @@ import scala.util.{Success, Try}
 class ConsoleHumanPlayer extends Player {
 
   override def nextMove(gameState: QuattroGameState): QuattroMove = {
-    val figures = gameState.availableFiguresForCurrentPlayer.toSeq
+    val figures = gameState.availableFiguresForCurrentPlayer
+    print("Your opponent still has these figures: ")
+    println(gameState.availableFiguresForOpponent.mkString(", "))
+
     println("Choose figure:")
     figures.zipWithIndex.map {
       case (f, i) => s"${i + 1}. $f"

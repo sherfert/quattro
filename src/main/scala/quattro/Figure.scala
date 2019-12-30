@@ -28,8 +28,8 @@ final case class Figure(color: Color, size: Size, shape: Shape, hole: Hole) {
 }
 
 object Figure {
-  def all: Set[Figure] = {
-    Set(
+  def all: Seq[Figure] = {
+    Seq(
       Figure(White, Small, Round, WithHole),
       Figure(White, Small, Round, NoHole),
       Figure(White, Small, Rectangle, WithHole),

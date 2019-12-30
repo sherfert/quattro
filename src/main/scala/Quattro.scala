@@ -24,6 +24,6 @@ object Quattro {
   }
 
   def main(args: Array[String]): Unit = {
-    println("Winner: " + play(new ConsoleHumanPlayer(), new NegamaxPCPlayer(Black, maxDepth = 2)))
+    println("Winner: " + play(new ConsoleHumanPlayer(), new NegamaxPCPlayer(Black, maxDepth = 3)))
   }
 }

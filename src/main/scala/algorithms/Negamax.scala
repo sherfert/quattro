@@ -18,34 +18,37 @@ object Negamax {
    * @return the best next move.
    */
   def nextMove[MOVE](state: GameState[MOVE], maxDepth: Int, hVal: GameState[MOVE] => Int): MOVE = {
-    val moveScores = {
-      for {
-        move <- state.availableMoves
-      } yield move -> negamax(state.play(move), maxDepth, hVal)
+    val NRes(value, moves) = negamax0(state, maxDepth + 1, -RANGE, RANGE, 1, hVal)
+//    println(s"The computer has chosen a move with score $value and thinks this is going to happen: $moves")
+    moves.head
+  }
+
+  private case class NRes[MOVE](value: Int, moves: List[MOVE]) {
+    def max(other: NRes[MOVE]): NRes[MOVE] = {
+      Seq(this, other).maxBy(x => (x.value, -x.moves.length))
     }
-    val bestMove = moveScores.minBy(_._2)._1
-    bestMove
+
+    def unary_-(): NRes[MOVE] = NRes(-value, moves)
+
+    def withMove(move: MOVE): NRes[MOVE] = NRes(value, move :: moves)
   }
 
-  private def negamax[MOVE](state: GameState[MOVE], maxDepth: Int, hVal: GameState[MOVE] => Int): Int = {
-    negamax0(state, maxDepth, -RANGE, RANGE, -1, hVal)
-  }
-
-  private def negamax0[MOVE](state: GameState[MOVE], depth: Int, alpha: Int, beta: Int, myFactor: Int, hVal: GameState[MOVE] => Int): Int = {
+  private def negamax0[MOVE](state: GameState[MOVE], depth: Int, alpha: Int, beta: Int, myFactor: Int, hVal: GameState[MOVE] => Int): NRes[MOVE] = {
     if(state.isTerminal || depth == 0)
-      return myFactor * hVal(state)
+      return NRes(myFactor * hVal(state), Nil)
 
-    var bestResult = -RANGE
+    var bestResult = NRes[MOVE](-RANGE, Nil)
 
-    val moves = state.availableMoves.toSeq
+    val moves = state.availableMoves
     var i = 0
     var break = false
+    var nextAlpha = alpha
     while(i < moves.size && !break) {
       val move = moves(i)
       val newState = state.play(move)
-      val bestChildResult = -negamax0(newState, depth - 1, -beta, -alpha, -myFactor, hVal)
-      bestResult = math.max(bestResult, bestChildResult)
-      val nextAlpha = math.max(alpha, bestResult)
+      val bestChildResult = -negamax0(newState, depth - 1, -beta, -nextAlpha, -myFactor, hVal).withMove(move)
+      bestResult = bestResult.max(bestChildResult)
+      nextAlpha = math.max(nextAlpha, bestResult.value)
       if (nextAlpha >= beta) {
         break = true
       }

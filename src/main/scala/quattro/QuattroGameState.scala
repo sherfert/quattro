@@ -22,8 +22,8 @@ case class QuattroGameState private(nextTurnColor: Color, board: Seq[Seq[Option[
       board.updated(move.x, board(move.x).updated(move.y, Some(move.figure))))
   }
 
-  override lazy val availableMoves: Set[QuattroMove] = {
-    if (winner.isDefined) Set.empty
+  override lazy val availableMoves: Seq[QuattroMove] = {
+    if (winner.isDefined) Seq.empty
     else for {
       f <- availableFiguresForCurrentPlayer
       x <- 0 until 4
@@ -33,13 +33,17 @@ case class QuattroGameState private(nextTurnColor: Color, board: Seq[Seq[Option[
 
   override lazy val isTerminal: Boolean = winner.isDefined || availableMoves.isEmpty
 
-  lazy val availableFiguresForCurrentPlayer: Set[Figure] = {
+  lazy val availableFiguresForCurrentPlayer: Seq[Figure] = availableFiguresInColor(nextTurnColor)
+
+  def availableFiguresForOpponent: Seq[Figure] = availableFiguresInColor(nextTurnColor.other)
+
+  private def availableFiguresInColor(color: Color): Seq[Figure] = {
     val fs = figuresOnBoard
-    Figure.all.filter { f => f.color == nextTurnColor && !fs.contains(f)}
+    Figure.all.filter { f => f.color == color && !fs.contains(f)}
   }
 
-  private lazy val figuresOnBoard: Set[Figure] = {
-    board.flatten.flatten.toSet
+  private lazy val figuresOnBoard: Seq[Figure] = {
+    board.flatten.flatten
   }
 
   lazy val winner: Option[Color] = {

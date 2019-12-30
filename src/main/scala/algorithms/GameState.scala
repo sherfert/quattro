@@ -11,7 +11,7 @@ trait GameState[MOVE] {
   /**
    * @return all possible moves from this game state
    */
-  def availableMoves: Set[MOVE]
+  def availableMoves: Seq[MOVE]
 
   /**
    * @return whether this is a terminal game state.
