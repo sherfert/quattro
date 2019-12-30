@@ -16,9 +16,7 @@ object QuattroGameState {
 case class QuattroGameState private(nextTurnColor: Color, board: Seq[Seq[Option[Figure]]]) extends GameState[QuattroMove] {
 
   override def play(move: QuattroMove): QuattroGameState = {
-    require(move.figure.color == nextTurnColor)
-    require(!board.exists(_.exists(_.contains(move.figure))))
-    require(board(move.x)(move.y).isEmpty)
+    require(availableMoves.contains(move))
 
     QuattroGameState(nextTurnColor.other,
       board.updated(move.x, board(move.x).updated(move.y, Some(move.figure))))

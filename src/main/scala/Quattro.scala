@@ -1,4 +1,4 @@
-import player.{ConsoleHumanPlayer, Player, RandomPCPlayer}
+import player.{ConsoleHumanPlayer, NegamaxPCPlayer, Player}
 import quattro.{Black, Color, QuattroGameState, White}
 
 import scala.annotation.tailrec
@@ -24,6 +24,6 @@ object Quattro {
   }
 
   def main(args: Array[String]): Unit = {
-    println("Winner: " + play(new ConsoleHumanPlayer(), new RandomPCPlayer()))
+    println("Winner: " + play(new ConsoleHumanPlayer(), new NegamaxPCPlayer(Black, maxDepth = 1)))
   }
 }
