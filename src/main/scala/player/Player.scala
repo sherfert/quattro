@@ -1,7 +1,7 @@
 package player
 
-import quattro.{GameState, Move}
+import quattro.{QuattroGameState, QuattroMove}
 
 trait Player {
-  def nextMove(gameState: GameState): Move
+  def nextMove(gameState: QuattroGameState): QuattroMove
 }

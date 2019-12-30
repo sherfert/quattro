@@ -1,34 +1,39 @@
 package quattro
 
-case class Move(figure: Figure, x: Int, y: Int) {
+import algorithms.GameState
+
+case class QuattroMove(figure: Figure, x: Int, y: Int) {
   require(x >= 0)
   require(x < 4)
   require(y >= 0)
   require(y < 4)
 }
 
-object GameState {
-  def apply(): GameState = GameState(White, Seq.fill(4)(Seq.fill(4)(None)))
+object QuattroGameState {
+  def apply(): QuattroGameState = QuattroGameState(White, Seq.fill(4)(Seq.fill(4)(None)))
 }
 
-case class GameState private(nextTurnColor: Color, board: Seq[Seq[Option[Figure]]]) {
-  def put(move: Move): GameState = {
+case class QuattroGameState private(nextTurnColor: Color, board: Seq[Seq[Option[Figure]]]) extends GameState[QuattroMove] {
+
+  override def play(move: QuattroMove): QuattroGameState = {
     require(move.figure.color == nextTurnColor)
     require(!board.exists(_.exists(_.contains(move.figure))))
     require(board(move.x)(move.y).isEmpty)
 
-    GameState(nextTurnColor.other,
+    QuattroGameState(nextTurnColor.other,
       board.updated(move.x, board(move.x).updated(move.y, Some(move.figure))))
   }
 
-  lazy val availableMoves: Set[Move] = {
+  override lazy val availableMoves: Set[QuattroMove] = {
     if (winner.isDefined) Set.empty
     else for {
       f <- availableFiguresForCurrentPlayer
       x <- 0 until 4
       y <- 0 until 4 if board(x)(y).isEmpty
-    } yield Move(f, x, y)
+    } yield QuattroMove(f, x, y)
   }
+
+  override lazy val isTerminal: Boolean = winner.isDefined || availableMoves.isEmpty
 
   lazy val availableFiguresForCurrentPlayer: Set[Figure] = {
     val fs = figuresOnBoard
@@ -49,8 +54,6 @@ case class GameState private(nextTurnColor: Color, board: Seq[Seq[Option[Figure]
       }
     }) Some(nextTurnColor.other) else None
   }
-
-  lazy val isTerminal: Boolean = winner.isDefined || availableMoves.isEmpty
 
   private lazy val lines: Seq[Seq[Option[Figure]]] = {
     val horizontal = board

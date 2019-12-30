@@ -1,5 +1,5 @@
 import player.{ConsoleHumanPlayer, Player, RandomPCPlayer}
-import quattro.{Black, Color, GameState, White}
+import quattro.{Black, Color, QuattroGameState, White}
 
 import scala.annotation.tailrec
 
@@ -12,15 +12,15 @@ object Quattro {
     }
 
     @tailrec
-    def playNext(state: GameState): Option[Color] = {
+    def playNext(state: QuattroGameState): Option[Color] = {
       println(state)
       state.winner match {
         case s@Some(_) => s
         case _ =>
-          playNext(state.put(playerFor(state.nextTurnColor).nextMove(state)))
+          playNext(state.play(playerFor(state.nextTurnColor).nextMove(state)))
       }
     }
-    playNext(GameState())
+    playNext(QuattroGameState())
   }
 
   def main(args: Array[String]): Unit = {

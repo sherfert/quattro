@@ -1,12 +1,12 @@
 package player
 
-import quattro.{GameState, Move}
+import quattro.{QuattroGameState, QuattroMove}
 
 import scala.util.Random
 
 class RandomPCPlayer extends Player {
   private val rand = new Random()
-  override def nextMove(gameState: GameState): Move = {
+  override def nextMove(gameState: QuattroGameState): QuattroMove = {
     val moves = gameState.availableMoves.toSeq
     moves(rand.nextInt(moves.size))
   }
